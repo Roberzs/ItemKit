@@ -2,10 +2,12 @@ using UnityEngine;
 using QFramework;
 using UnityEngine.EventSystems;
 using UnityEngine.Profiling.Memory.Experimental;
+using System.Linq.Expressions;
 
 namespace QFramework.Example
 {
-    public partial class UISlot : ViewController, IBeginDragHandler, IDragHandler, IEndDragHandler
+    public partial class UISlot : ViewController, IBeginDragHandler, IDragHandler, IEndDragHandler, 
+        IPointerEnterHandler, IPointerExitHandler
 	{
         private bool _isDragging;
 
@@ -18,8 +20,9 @@ namespace QFramework.Example
             if (data != null && data.Count != 0)
             {
                 ImgIcon.Show();
-                TxtName.text = data.Item.Name;
+                TxtName.text = data.Item.GetName();
                 TxtCount.text = data.Count.ToString();
+                ImgIcon.sprite = data.Item.GetIcon();
             }
             else
             {
@@ -71,47 +74,48 @@ namespace QFramework.Example
 
             ImgIcon.Parent(transform);
 
-            var isThrowItem = true;
 
-            var uiSlots = transform.parent.GetComponentsInChildren<UISlot>();
-            foreach (var uiSlot in uiSlots)
+
+            var uiSlot = ItemKit.CurrentSlotPointerOn;
+            if (uiSlot != null) 
             {
-                var rectTransform = uiSlot.transform as RectTransform;
-                if (RectTransformUtility.RectangleContainsScreenPoint(rectTransform, Input.mousePosition))
+                if (uiSlot == this)
                 {
-                    isThrowItem = false;
+                    ImgIcon.LocalPositionIdentity();
+                }
+                else
+                {
+                    // 交换位置
+                    var cacheItem = uiSlot.Data.Item;
+                    var cacheCount = uiSlot.Data.Count;
 
-                    if (uiSlot == this)
-                    {
-                        ImgIcon.LocalPositionIdentity();
-                    }
-                    else
-                    {
-                        // 交换位置
-                        var cacheItem = uiSlot.Data.Item;
-                        var cacheCount = uiSlot.Data.Count;
+                    uiSlot.Data.Item = Data.Item;
+                    uiSlot.Data.Count = Data.Count;
+                    Data.Item = cacheItem;
+                    Data.Count = cacheCount;
 
-                        uiSlot.Data.Item = Data.Item;
-                        uiSlot.Data.Count = Data.Count;
-                        Data.Item = cacheItem;
-                        Data.Count = cacheCount;
-
-                        FindObjectOfType<UGUIInventoryExample>().ReflushUISlot();
-                    }
-                    
-                    break;
+                    FindObjectOfType<UGUIInventoryExample>().ReflushUISlot();
+                    FindObjectOfType<BagExample>().ReflushUISlot();
                 }
             }
-
-            if (isThrowItem)
+            else
             {
                 Data.Item = null;
                 Data.Count = 0;
                 FindObjectOfType<UGUIInventoryExample>().ReflushUISlot();
+                FindObjectOfType<BagExample>().ReflushUISlot();
             }
             
         }
 
-        
-	}
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            ItemKit.CurrentSlotPointerOn = null;
+        }
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            ItemKit.CurrentSlotPointerOn = this;
+        }
+    }
 }

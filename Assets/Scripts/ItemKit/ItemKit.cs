@@ -6,31 +6,35 @@ namespace QFramework
 {
     public class ItemKit
     {
-        public static List<Item> Items = new List<Item>() 
-        {
-            new Item("Item_1", "物品1"),
-            new Item("Item_2", "物品2"),
-            new Item("Item_3", "物品3"),
-            new Item("Item_4", "物品4"),
-        };
+        public static QFramework.Example.UISlot CurrentSlotPointerOn = null;
 
-        public static Dictionary<string, Item> ItemByKeyDict = new Dictionary<string, Item>()
-        {
-            {Items[0].Key, Items[0] },
-            {Items[1].Key, Items[1] },
-            {Items[2].Key, Items[2] },
-            {Items[3].Key, Items[3] },
-        };
+        public static List<IItem> Items = new List<IItem>();
 
-        public static List<Slot> Slots = new List<Slot>()
+        public static Dictionary<string, IItem> ItemByKeyDict = new Dictionary<string, IItem>();
+
+        public static List<Slot> Slots = new List<Slot>();
+
+        public static List<Slot> BagSlots = new List<Slot>();
+
+        public static void LoadItemDatabase(string configName)
+        {
+            var config = Resources.Load<ItemDatabase>(configName);
+            foreach (var item in config.ItemConfigs)
             {
-                new Slot(ItemByKeyDict[Items[0].Key], 2),
-                new Slot(ItemByKeyDict[Items[1].Key], 4),
-                new Slot(ItemByKeyDict[Items[2].Key], 1),
-                new Slot(ItemByKeyDict[Items[3].Key], 8),
-            };
+                AddItemConfig(item);
+            }
+        }
 
-        
+        public static void AddItemConfig(IItem item)
+        {
+            Items.Add(item);
+            ItemByKeyDict.Add(item.GetKey(), item);
+        }
+
+        public static void CreateSlot(IItem item, int count)
+        {
+            Slots.Add(new Slot(item, count));
+        }
 
         public static void AddItem(string key, int cnt = 1)
         {
@@ -61,7 +65,7 @@ namespace QFramework
 
         static Slot FindSoltByKey(string key, bool isZeroResultsIncluded)
         {
-            var solt = ItemKit.Slots.Find(s => s != null && s.Item != null && s.Item.Key == key);
+            var solt = ItemKit.Slots.Find(s => s != null && s.Item != null && s.Item.GetKey() == key);
 
             if (solt == null)
             {

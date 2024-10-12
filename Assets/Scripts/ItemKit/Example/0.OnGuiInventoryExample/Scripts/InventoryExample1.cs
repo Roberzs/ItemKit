@@ -23,7 +23,7 @@ namespace QFramework.Example
                 GUILayout.BeginHorizontal("box");
                 if (slot.Count > 0)
                 {
-                    GUILayout.Label($"{slot.Item.Name}x{slot.Count}");
+                    GUILayout.Label($"{slot.Item.GetName()}x{slot.Count}");
                 }
                 else
                 {
@@ -36,7 +36,7 @@ namespace QFramework.Example
             for (int i = 0; i < ItemKit.Slots.Count; i++)
             {
                 var idx = i + 1;
-                var key = ItemKit.Items[i].Key;
+                var key = ItemKit.Items[i].GetKey();
                 GUILayout.BeginHorizontal();
                 GUILayout.Label("物品" + idx);
                 if (GUILayout.Button("+"))

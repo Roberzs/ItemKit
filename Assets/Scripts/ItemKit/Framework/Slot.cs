@@ -6,10 +6,10 @@ namespace QFramework
 {
     public class Slot
     {
-        public Item Item { get; set; }
+        public IItem Item { get; set; }
         public int Count { get; set; }
 
-        public Slot(Item item, int count)
+        public Slot(IItem item, int count)
         {
             Item = item;
             Count = count;

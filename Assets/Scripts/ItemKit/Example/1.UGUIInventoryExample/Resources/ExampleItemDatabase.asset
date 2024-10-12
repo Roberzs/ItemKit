@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-7740399655901482477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ff6cdb75c648cb4694537cb43146328, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Name: "\u94C1\u5757"
+  Key: Item_Iron
+  Icon: {fileID: -6503034749178081580, guid: 663829dc17ac5a9438f0877beeb444e0, type: 3}
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51aabc44b49d584419918f71a7ab555b, type: 3}
+  m_Name: ExampleItemDatabase
+  m_EditorClassIdentifier: 
+  NameSpace: Qframework.Example
+  ItemConfigs:
+  - {fileID: 2606651595535794621}
+  - {fileID: -7740399655901482477}
+--- !u!114 &2606651595535794621
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ff6cdb75c648cb4694537cb43146328, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Name: "\u7EFF\u5B9D\u77F3\u5251"
+  Key: Item_GreenSword
+  Icon: {fileID: 8296213929934205469, guid: 663829dc17ac5a9438f0877beeb444e0, type: 3}
