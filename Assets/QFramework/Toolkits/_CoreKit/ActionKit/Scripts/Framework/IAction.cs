@@ -35,6 +35,7 @@ namespace QFramework
         bool Paused { get; set; }
         void Reset();
         void Deinit();
+        void Recycle();
     }
 
     public interface IAction<TStatus>
@@ -136,7 +137,6 @@ namespace QFramework
 
         public ActionUpdateModes UpdateMode { get; set; }
         
-        
         public bool Paused
         {
             get => Action.Paused;
@@ -151,15 +151,23 @@ namespace QFramework
             }
         }
 
-        public static IActionController Allocate() => mPool.Allocate();
-
+        public static IActionController Allocate()
+        {
+            var controller = mPool.Allocate() as ActionController;
+            return controller;
+        }
+        
         public void Deinit()
         {
-            if (Action.ActionID == ActionID)
+            if (Action != null && Action.ActionID == ActionID)
             {
                 Action.Deinit();
-                mPool.Recycle(this);
             }
+        }
+
+        public void Recycle()
+        {
+            mPool.Recycle(this);
         }
     }
 

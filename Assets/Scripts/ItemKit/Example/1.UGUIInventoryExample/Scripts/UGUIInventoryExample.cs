@@ -8,19 +8,39 @@ namespace QFramework.Example
 {
 	public partial class UGUIInventoryExample : ViewController
 	{
-		void Start()
-		{
-            // Code Here
+        const string InventoryName = "物品栏";
+        const string BagName = "背包";
+        const string EquipName = "装备";
 
+        private void Awake()
+        {
             // Initdata
             ItemKit.LoadItemDatabase("ExampleItemDatabase");
 
-            ItemKit.CreateSlot(ItemKit.ItemByKeyDict[Items.Item_Iron], 1);
-            ItemKit.CreateSlot(ItemKit.ItemByKeyDict[Items.Item_GreenSword], 1);
-            ItemKit.CreateSlot(null, 0);
+            ItemKit.CreateSlotGroup(InventoryName)
+                .CreateSlot(ItemKit.ItemByKeyDict[Items.Item_Iron], 1)
+                .CreateSlot(ItemKit.ItemByKeyDict[Items.Item_GreenSword], 1)
+                .CreateSlot(null, 0);
 
-            UISlot.Hide();
-			UIInventory.Hide();
+            ItemKit.CreateSlotGroup(BagName)
+                .CreateSlotsByCount(20);
+
+            ItemKit.CreateSlotGroup(EquipName)
+                .CreateSlotsByCount(1)
+                .Condition(Item=>Item.GetBoolean("IsWeapon"));
+
+            var weaponSlot = ItemKit.GetSlotGroupByKey(EquipName).Slots[0];
+            weaponSlot.Changed.Register(() =>
+            {
+                Debug.Log("武器变更");
+            });
+
+        }
+
+        void Start()
+		{
+            // Code Here
+            UIInventory.Hide();
 
 			// 按钮
 			foreach (var item in ItemKit.Items)
@@ -32,32 +52,24 @@ namespace QFramework.Example
                         self.TxtName.text = item.GetName();
                         self.BtnAdd.onClick.AddListener(() =>
                         {
-                            ItemKit.AddItem(key, 1);
-                            ReflushUISlot();
+                            var res = ItemKit.GetSlotGroupByKey(InventoryName).AddItem(key, 10);
+                            if (!res.Succend)
+                            {
+                                Debug.LogWarning("背包满了 有" + res.RemainCount + "个物品为添加成功");
+                            }
+                            //ReflushUISlot();
                         });
                         self.BtnSub.onClick.AddListener(() =>
                         {
-                            ItemKit.SubItem(key, 1);
-                            ReflushUISlot();
+                            ItemKit.GetSlotGroupByKey(InventoryName).SubItem(key, 1);
+                            //ReflushUISlot();
                         });
 
                     }).Show();
 			}
 
-            ReflushUISlot();
+            //ReflushUISlot();
 
-        }
-
-		public void ReflushUISlot()
-		{
-			UISlotRoot.DestroyChildren();
-
-            foreach (var slot in ItemKit.Slots)
-            {
-                UISlot.InstantiateWithParent(UISlotRoot)
-                    .InitWithSlot(slot)
-                    .Show();
-            }
         }
 	}
 }

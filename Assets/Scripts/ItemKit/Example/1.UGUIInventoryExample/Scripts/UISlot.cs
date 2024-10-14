@@ -1,8 +1,5 @@
 using UnityEngine;
-using QFramework;
 using UnityEngine.EventSystems;
-using UnityEngine.Profiling.Memory.Experimental;
-using System.Linq.Expressions;
 
 namespace QFramework.Example
 {
@@ -17,12 +14,30 @@ namespace QFramework.Example
         {
             Data = data;
 
-            if (data != null && data.Count != 0)
+            Data.Changed.Register(ReflushView);
+
+            ReflushView();
+
+            return this;
+        }
+
+        private void ReflushView()
+        {
+            if (Data != null && Data.Count != 0)
             {
                 ImgIcon.Show();
-                TxtName.text = data.Item.GetName();
-                TxtCount.text = data.Count.ToString();
-                ImgIcon.sprite = data.Item.GetIcon();
+                TxtName.text = Data.Item.GetName();
+                if (Data.Item.IsStackable) 
+                {
+                    TxtCount.text = Data.Count.ToString();
+                    TxtCount.Show();
+                }
+                else
+                {
+                    TxtCount.Hide();
+                }
+                
+                ImgIcon.sprite = Data.Item.GetIcon();
             }
             else
             {
@@ -31,14 +46,13 @@ namespace QFramework.Example
                 ImgIcon.Hide();
                 TxtCount.text = "";
             }
-            return this;
         }
 
         private void SyncItemToMousePos()
         {
             var mousePos = Input.mousePosition;
-            var rectTransform = FindObjectOfType<UGUIInventoryExample>().transform as RectTransform;
-            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, mousePos, 
+            //var rectTransform = FindObjectOfType<UGUIInventoryExample>().transform as RectTransform;
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(transform as RectTransform, mousePos, 
                 null, out var localPos))
             {
                 ImgIcon.LocalPosition2D(localPos);
@@ -51,8 +65,12 @@ namespace QFramework.Example
                 return;
             _isDragging = true;
 
-            var parent = FindObjectOfType<UGUIInventoryExample>().transform;
-            ImgIcon.Parent(parent);
+            //var parent = FindObjectOfType<UGUIInventoryExample>().transform;
+            //ImgIcon.Parent(parent);
+
+            var canvas = ImgIcon.GetOrAddComponent<Canvas>();
+            canvas.overrideSorting = true;
+            canvas.sortingOrder = 100;
 
             SyncItemToMousePos();
         }
@@ -72,19 +90,24 @@ namespace QFramework.Example
 
             _isDragging = false;
 
-            ImgIcon.Parent(transform);
-
-
+            //ImgIcon.Parent(transform);
+            var canvas= ImgIcon.GetOrAddComponent<Canvas>();
+            canvas.DestroySelf();
+            ImgIcon.LocalPositionIdentity();
 
             var uiSlot = ItemKit.CurrentSlotPointerOn;
             if (uiSlot != null) 
             {
                 if (uiSlot == this)
                 {
-                    ImgIcon.LocalPositionIdentity();
+                    //ImgIcon.LocalPositionIdentity();
                 }
                 else
                 {
+                    if (!uiSlot.Data.SlotGroup.CheckCondition(Data.Item))
+                    {
+                        return;
+                    }
                     // 交换位置
                     var cacheItem = uiSlot.Data.Item;
                     var cacheCount = uiSlot.Data.Count;
@@ -94,16 +117,16 @@ namespace QFramework.Example
                     Data.Item = cacheItem;
                     Data.Count = cacheCount;
 
-                    FindObjectOfType<UGUIInventoryExample>().ReflushUISlot();
-                    FindObjectOfType<BagExample>().ReflushUISlot();
+                    uiSlot.Data.Changed.Trigger();
+                    Data.Changed.Trigger();
                 }
             }
             else
             {
                 Data.Item = null;
                 Data.Count = 0;
-                FindObjectOfType<UGUIInventoryExample>().ReflushUISlot();
-                FindObjectOfType<BagExample>().ReflushUISlot();
+
+                Data.Changed.Trigger();
             }
             
         }

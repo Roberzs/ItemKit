@@ -326,7 +326,7 @@ namespace MyBox.Internal
 
             var path = property.propertyPath.Replace(".Array.data[", "[");
             var elements = path.Split('.');
-
+            
             var nestedProperty = NestedPropertyOrigin(property, elements);
 
             // if nested property is null = we hit an array property

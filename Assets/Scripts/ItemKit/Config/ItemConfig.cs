@@ -16,13 +16,39 @@ namespace QFramework
         public string Name = string.Empty;
         [DisplayLabel("关键字")]
         public string Key = string.Empty;
+        [DisplayLabel("是武器")]
+        public bool IsWeapon = false;
+        [DisplayLabel("是否可堆叠")]
+        public bool Stackable = true;
+        [DisplayIf(nameof(Stackable), false, true)]
+        [DisplayLabel("     是否有最大数量")]
+        public bool HasMaxStackableCount = false;
+        [DisplayIf(new string[] { nameof(Stackable), nameof(HasMaxStackableCount) }, new bool[] { false,false }, true)]
+        [DisplayLabel("         最大数量")]
+        public int MaxStackableCount;
+
         public Sprite Icon;
+
+        public bool IsStackable => Stackable;
+
+        bool IItem.HasMaxStackableCount => HasMaxStackableCount;
+
+        int IItem.MaxStackableCount => MaxStackableCount;
 
         public Sprite GetIcon() => Icon;
 
         public string GetKey() => Key;
 
         public string GetName() => Name;
+
+        public bool GetBoolean(string propertyName)
+        {
+            if (propertyName == "IsWeapon")
+            {
+                return IsWeapon;
+            }
+            return false;
+        }
     }
 
 #if UNITY_EDITOR
