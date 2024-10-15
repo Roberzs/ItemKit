@@ -25,7 +25,18 @@ namespace QFramework
         {
             public ItemConfig Item;
             public Editor Editor;
-            public bool Foldout = false;
+            public bool Foldout 
+            {
+                get    
+                {
+                    return EditorPrefs.GetBool(Item.GetName() + "_foldout", true);
+                }
+                set
+                {
+                    EditorPrefs.SetBool(Item.GetName() + "_foldout", value);
+                }
+            }
+        
         }
 
         static ItemDatabase _target;

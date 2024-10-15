@@ -18,7 +18,7 @@ namespace QFramework
             UseExistUISlot
         }
 
-        public string Key = "Key";
+        public string GroupKey = "Key";
 
         [DisplayLabel("生成类型")]
         public UISlotGenerateType GenerateType;
@@ -30,32 +30,40 @@ namespace QFramework
         //[DisplayIf(nameof(GenerateType), false, UISlotGenerateType.UseExistUISlot)]
         public List<QFramework.Example.UISlot> UISlots;
 
+
         private void Start()
         {
-            if (GenerateType == UISlotGenerateType.GenerateTemplete)
-            {
-                UISlotTemplete.Hide();
-                ReflushUISlot();
-            }
-            else if (GenerateType == UISlotGenerateType.UseExistUISlot)
-            {
-                for (int  i = 0; i < UISlots.Count; i++)
-                {
-                    UISlots[i].InitWithSlot(ItemKit.GetSlotGroupByKey(Key).Slots[i]);
-                }
-            }
+            ReflushUISlot();
+        }
+
+        public void ReflushWithGroupKey(string key)
+        {
+            GroupKey = key;
+            ReflushUISlot();
         }
 
         public void ReflushUISlot()
         {
-            UISlotRoot.DestroyChildrenWithCondition(t=>t.transform.name != "BagContainer");
-
-            foreach (var slot in ItemKit.GetSlotGroupByKey(Key).Slots)
+            if (GenerateType == UISlotGenerateType.GenerateTemplete)
             {
-                UISlotTemplete.InstantiateWithParent(UISlotRoot)
-                    .InitWithSlot(slot)
-                    .Show();
+                UISlotTemplete.Hide();
+                UISlotRoot.DestroyChildrenWithCondition(t => t.transform.name != "BagContainer");
+                
+                foreach (var slot in ItemKit.GetSlotGroupByKey(GroupKey).Slots)
+                {
+                    UISlotTemplete.InstantiateWithParent(UISlotRoot)
+                        .InitWithSlot(slot)
+                        .Show();
+                }
             }
+            else if (GenerateType == UISlotGenerateType.UseExistUISlot)
+            {
+                for (int i = 0; i < UISlots.Count; i++)
+                {
+                    UISlots[i].InitWithSlot(ItemKit.GetSlotGroupByKey(GroupKey).Slots[i]);
+                }
+            }
+
         }
     }
 

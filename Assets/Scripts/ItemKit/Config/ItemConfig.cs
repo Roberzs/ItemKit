@@ -55,23 +55,32 @@ namespace QFramework
     [CustomEditor(typeof(ItemConfig))]
     public class ItemConfigInspector : Editor
     {
+        SerializedProperty _keySp;
         SerializedProperty _iconSp;
 
         private void OnEnable()
         {
+            _keySp = serializedObject.FindProperty("Key");
             _iconSp = serializedObject.FindProperty("Icon");
         }
 
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
-
-            //base.OnInspectorGUI();
             serializedObject.DrawProperties(false, 0, "Icon");
+
             GUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel("图标");
-            _iconSp.objectReferenceValue = EditorGUILayout.ObjectField(_iconSp.objectReferenceValue, typeof(Sprite), true, GUILayout.Width(48), GUILayout.Height(48));
+            _iconSp.objectReferenceValue = EditorGUILayout.ObjectField(_iconSp.objectReferenceValue, typeof(Sprite),
+                true, GUILayout.Width(48), GUILayout.Height(48));
             EditorGUILayout.EndHorizontal();
+
+            if (_keySp.stringValue != target.name)
+            {
+                target.name = _keySp.stringValue;
+                EditorUtility.SetDirty(target);
+                //AssetDatabase.SaveAssetIfDirty(target);
+            }
             serializedObject.ApplyModifiedProperties();
         }
     }

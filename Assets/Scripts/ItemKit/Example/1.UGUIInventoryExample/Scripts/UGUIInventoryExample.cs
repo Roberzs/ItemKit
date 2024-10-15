@@ -29,11 +29,29 @@ namespace QFramework.Example
                 .CreateSlotsByCount(1)
                 .Condition(Item=>Item.GetBoolean("IsWeapon"));
 
+            //ItemKit.CreateSlotGroup("宝箱")
+            //    .CreateSlot(null, 0)
+            //    .CreateSlot(null, 0)
+            //    .CreateSlot(null, 0)
+            //    .CreateSlot(null, 0)
+            //    .CreateSlot(null, 0)
+            //    .CreateSlot(null, 0);
+
+            ItemKit.CreateSlotGroup("宝箱2")
+                .CreateSlot(null, 0)
+                .CreateSlot(ItemKit.ItemByKeyDict[Items.Item_GreenSword], 1)
+                .CreateSlot(null, 0)
+                .CreateSlot(null, 0)
+                .CreateSlot(null, 0)
+                .CreateSlot(null, 0);
+
             var weaponSlot = ItemKit.GetSlotGroupByKey(EquipName).Slots[0];
             weaponSlot.Changed.Register(() =>
             {
                 Debug.Log("武器变更");
             });
+
+            ItemKit.Load();
 
         }
 
@@ -41,9 +59,10 @@ namespace QFramework.Example
 		{
             // Code Here
             UIInventory.Hide();
+            TreasureBoxExample.Hide();
 
-			// 按钮
-			foreach (var item in ItemKit.Items)
+            // 按钮
+            foreach (var item in ItemKit.Items)
 			{
                 var key = item.GetKey();
 				UIInventory.InstantiateWithParent(UIInventoryRoot)
@@ -68,8 +87,33 @@ namespace QFramework.Example
                     }).Show();
 			}
 
-            //ReflushUISlot();
-
+            BtnTreasureBox1.onClick.AddListener(() =>
+            {
+                //TreasureBoxExample.gameObject.SetActive(!TreasureBoxExample.gameObject.activeSelf);
+                if (!TreasureBoxExample.gameObject.activeSelf)
+                {
+                    TreasureBox.Open();
+                }
+                else
+                {
+                    TreasureBox.Close();
+                }
+                
+            });
+            BtnTreasureBox2.onClick.AddListener(() =>
+            {
+                TreasureBoxExample.gameObject.SetActive(!TreasureBoxExample.gameObject.activeSelf);
+                if (TreasureBoxExample.gameObject.activeSelf)
+                {
+                    var uiSlorGroup = TreasureBoxExample.GetComponent<UISlotGroup>();
+                    uiSlorGroup.ReflushWithGroupKey("宝箱2");
+                }
+            });
         }
-	}
+
+        private void OnApplicationQuit()
+        {
+            ItemKit.Save();
+        }
+    }
 }

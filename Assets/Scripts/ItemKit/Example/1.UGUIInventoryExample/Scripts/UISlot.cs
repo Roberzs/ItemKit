@@ -12,6 +12,10 @@ namespace QFramework.Example
 
         public UISlot InitWithSlot(Slot data)
         {
+            if (Data != null)
+            {
+                Data.Changed.UnRegister(ReflushView);
+            }
             Data = data;
 
             Data.Changed.Register(ReflushView);
