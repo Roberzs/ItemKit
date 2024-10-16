@@ -19,9 +19,41 @@ namespace QFramework
 
         public static Dictionary<string, IItem> ItemByKeyDict = new Dictionary<string, IItem>();
 
+        public static IItemKitLoader ItemKitLoader = new DefaultItemKitLoader();
+
+        public const string DefaultLanguagePackage = "zh_cn";
+        public static string CurrentLanguagePackage = DefaultLanguagePackage;
+
+        public static void LoadLanagePackage(string lanagePackageName)
+        {
+            if (lanagePackageName == CurrentLanguagePackage)
+            {
+
+            }
+            else if (lanagePackageName == DefaultLanguagePackage)
+            {
+                foreach (var item in ItemByKeyDict.Values)
+                {
+                    item.LocaleItem = null;
+                }
+            }
+            else if (lanagePackageName != CurrentLanguagePackage)
+            {
+                var lanagePackage = ItemKitLoader.LoadLanagePackage(lanagePackageName);// Resources.Load<ItemLanguagePackage>(lanagePackageName);
+                foreach (var locale in lanagePackage.LocaleItems)
+                {
+                    if (ItemByKeyDict.TryGetValue(locale.Key, out var item))
+                    {
+                        item.LocaleItem = locale;
+                    }
+                }
+            }
+            CurrentLanguagePackage = lanagePackageName;
+        }
+
         public static void LoadItemDatabase(string configName)
         {
-            var config = Resources.Load<ItemDatabase>(configName);
+            var config = ItemKitLoader.LoadItemDatabase(configName);// Resources.Load<ItemDatabase>(configName);
             foreach (var item in config.ItemConfigs)
             {
                 AddItemConfig(item);
@@ -31,6 +63,7 @@ namespace QFramework
         public static void AddItemConfig(IItem item)
         {
             Items.Add(item);
+            item.LocaleItem = null;
             ItemByKeyDict.Add(item.GetKey(), item);
         }
 

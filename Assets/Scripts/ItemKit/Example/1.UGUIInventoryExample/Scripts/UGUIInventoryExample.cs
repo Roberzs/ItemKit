@@ -1,6 +1,9 @@
 using UnityEngine;
 using QFramework;
 using Qframework.Example;
+using System;
+using System.Runtime.CompilerServices;
+using UnityEngine.UI;
 
 // 1.请在菜单 编辑器扩展/Namespace Settings 里设置命名空间
 // 2.命名空间更改后，生成代码之后，需要把逻辑代码文件（非 Designer）的命名空间手动更改
@@ -51,7 +54,7 @@ namespace QFramework.Example
                 Debug.Log("武器变更");
             });
 
-            ItemKit.Load();
+            
 
         }
 
@@ -60,6 +63,8 @@ namespace QFramework.Example
             // Code Here
             UIInventory.Hide();
             TreasureBoxExample.Hide();
+
+            ItemKit.Load();
 
             // 按钮
             foreach (var item in ItemKit.Items)
@@ -108,6 +113,27 @@ namespace QFramework.Example
                     var uiSlorGroup = TreasureBoxExample.GetComponent<UISlotGroup>();
                     uiSlorGroup.ReflushWithGroupKey("宝箱2");
                 }
+            });
+
+            void UpdateLanageText() 
+            {
+                var text = BtnChangeLanguage.GetComponentInChildren<Text>();
+                if (ItemKit.CurrentLanguagePackage == ItemKit.DefaultLanguagePackage)
+                {
+                    text.text = "Chinese";
+                }
+                else
+                {
+                    text.text = "English";
+                }
+            }
+
+            UpdateLanageText();
+            BtnChangeLanguage.onClick.AddListener(() => 
+            {
+                var targetLanguage = ItemKit.CurrentLanguagePackage == ItemKit.DefaultLanguagePackage ? "ItemLanguagePackage_en" : "zh_cn";
+                ItemKit.LoadLanagePackage(targetLanguage);
+                UpdateLanageText();
             });
         }
 

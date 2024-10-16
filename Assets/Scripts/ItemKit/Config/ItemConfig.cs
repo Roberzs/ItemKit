@@ -9,13 +9,15 @@ namespace QFramework
 {
     
 
-    [CreateAssetMenu(menuName = "ItemKit/ Create ItemConfig")]
+    [CreateAssetMenu(menuName = "@ItemKit/Create ItemConfig File")]
     public class ItemConfig : ScriptableObject, IItem
     {
         [DisplayLabel("名称")]
         public string Name = string.Empty;
         [DisplayLabel("关键字")]
         public string Key = string.Empty;
+        [DisplayLabel("描述"), TextArea(minLines: 1, maxLines: 3)]
+        public string Description;
         [DisplayLabel("是武器")]
         public bool IsWeapon = false;
         [DisplayLabel("是否可堆叠")]
@@ -35,11 +37,13 @@ namespace QFramework
 
         int IItem.MaxStackableCount => MaxStackableCount;
 
+        public ItemLanguagePackage.LocaleItem LocaleItem { get; set; } = null;
+
         public Sprite GetIcon() => Icon;
 
         public string GetKey() => Key;
 
-        public string GetName() => Name;
+        public string GetName() => LocaleItem == null ? Name : LocaleItem.Name;
 
         public bool GetBoolean(string propertyName)
         {
@@ -49,6 +53,8 @@ namespace QFramework
             }
             return false;
         }
+
+        public string GetDescription() => LocaleItem == null ? Description : LocaleItem.Description;
     }
 
 #if UNITY_EDITOR
@@ -67,13 +73,14 @@ namespace QFramework
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
-            serializedObject.DrawProperties(false, 0, "Icon");
 
             GUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel("图标");
             _iconSp.objectReferenceValue = EditorGUILayout.ObjectField(_iconSp.objectReferenceValue, typeof(Sprite),
                 true, GUILayout.Width(48), GUILayout.Height(48));
             EditorGUILayout.EndHorizontal();
+
+            serializedObject.DrawProperties(false, 0, "Icon");
 
             if (_keySp.stringValue != target.name)
             {

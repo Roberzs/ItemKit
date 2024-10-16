@@ -69,6 +69,11 @@ namespace QFramework.Example
                 return;
             _isDragging = true;
 
+            if (Data != null && Data.Item != null)
+            {
+                Debug.Log(Data.Item.GetName() + " " + Data.Item.GetDescription());
+            }
+
             //var parent = FindObjectOfType<UGUIInventoryExample>().transform;
             //ImgIcon.Parent(parent);
 
@@ -81,6 +86,7 @@ namespace QFramework.Example
 
         public void OnDrag(PointerEventData eventData)
         {
+            
             if (_isDragging)
             {
                 SyncItemToMousePos();
@@ -138,11 +144,16 @@ namespace QFramework.Example
         public void OnPointerExit(PointerEventData eventData)
         {
             ItemKit.CurrentSlotPointerOn = null;
+            UIItemTip.Hide();
         }
 
         public void OnPointerEnter(PointerEventData eventData)
         {
             ItemKit.CurrentSlotPointerOn = this;
+            if (!_isDragging)
+            {
+                UIItemTip.Show(this);
+            }
         }
     }
 }

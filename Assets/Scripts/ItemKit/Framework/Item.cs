@@ -8,6 +8,8 @@ namespace QFramework
     {
         string GetKey();
         string GetName();
+        string GetDescription();
+        ItemLanguagePackage.LocaleItem LocaleItem { get; set; }
         Sprite GetIcon();
         bool IsStackable { get; }
         bool HasMaxStackableCount { get; }

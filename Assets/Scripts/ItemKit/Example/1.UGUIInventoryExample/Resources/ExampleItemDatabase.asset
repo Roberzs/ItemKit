@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: "\u94C1\u5757"
   Key: Item_Iron
+  Description: " \u4E00\u4E2A\u94C1\u5757"
   IsWeapon: 0
   Stackable: 1
   HasMaxStackableCount: 1
@@ -49,6 +50,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: "\u7EFF\u5B9D\u77F3\u5251"
   Key: Item_GreenSword
+  Description: "\u4E00\u628A\u7EFF\u8272\u7684\u5251"
   IsWeapon: 1
   Stackable: 0
   HasMaxStackableCount: 1

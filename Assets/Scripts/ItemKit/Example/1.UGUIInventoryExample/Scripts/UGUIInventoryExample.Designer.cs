@@ -1,4 +1,4 @@
-// Generate Id:d7efd7ed-1f9a-4ca5-9ed6-cfd48d901151
+// Generate Id:2c4ca201-b907-4998-a6ce-5c543e6bfa67
 using UnityEngine;
 
 // 1.请在菜单 编辑器扩展/Namespace Settings 里设置命名空间
@@ -15,6 +15,8 @@ namespace QFramework.Example
 		public UnityEngine.UI.Button BtnTreasureBox1;
 
 		public UnityEngine.UI.Button BtnTreasureBox2;
+
+		public UnityEngine.UI.Button BtnChangeLanguage;
 
 		public UnityEngine.GameObject TreasureBoxExample;
 
